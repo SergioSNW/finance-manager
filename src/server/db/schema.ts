@@ -52,6 +52,17 @@ export const holdings = sqliteTable("holdings", {
   updatedAt: text("updated_at").notNull(),
 });
 
+export const budgets = sqliteTable("budgets", {
+  id: text("id").primaryKey(),
+  categoryId: text("category_id").references(() => categories.id),
+  month: integer("month").notNull(),
+  year: integer("year").notNull(),
+  amountCents: integer("amount_cents").notNull(),
+  rolloverCents: integer("rollover_cents").notNull().default(0),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
 export const holdingTransactions = sqliteTable("holding_transactions", {
   id: text("id").primaryKey(),
   holdingId: text("holding_id")

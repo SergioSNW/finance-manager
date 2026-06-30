@@ -1,5 +1,5 @@
 import { getDb } from "@/lib/db";
-import { accounts, categories, transactions, holdings, holdingTransactions } from "./schema";
+import { accounts, categories, transactions, holdings, holdingTransactions, budgets } from "./schema";
 import { generateId, nowISO, todayISO, centsFromDecimal } from "@/lib/format";
 
 export function seed() {
@@ -89,5 +89,20 @@ export function seed() {
     const ht4 = { id: generateId(), holdingId: holdingBND.id, type: "buy" as const, shares: 20, pricePerShare: centsFromDecimal(72), date: daysAgo(45), notes: null, createdAt: nowISO() };
 
     db.insert(holdingTransactions).values([ht1, ht2, ht3, ht4]).run();
+
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+
+    const budgetGlobal = { id: generateId(), categoryId: null, month: currentMonth, year: currentYear, amountCents: centsFromDecimal(3000), rolloverCents: 0, createdAt: nowISO(), updatedAt: nowISO() };
+    const budgetGroceries = { id: generateId(), categoryId: catGroceries.id, month: currentMonth, year: currentYear, amountCents: centsFromDecimal(500), rolloverCents: 85, createdAt: nowISO(), updatedAt: nowISO() };
+    const budgetDining = { id: generateId(), categoryId: catDining.id, month: currentMonth, year: currentYear, amountCents: centsFromDecimal(200), rolloverCents: 0, createdAt: nowISO(), updatedAt: nowISO() };
+    const budgetRent = { id: generateId(), categoryId: catRent.id, month: currentMonth, year: currentYear, amountCents: centsFromDecimal(1200), rolloverCents: 0, createdAt: nowISO(), updatedAt: nowISO() };
+    const budgetTransport = { id: generateId(), categoryId: catTransport.id, month: currentMonth, year: currentYear, amountCents: centsFromDecimal(100), rolloverCents: 22, createdAt: nowISO(), updatedAt: nowISO() };
+    const budgetEntertainment = { id: generateId(), categoryId: catEntertainment.id, month: currentMonth, year: currentYear, amountCents: centsFromDecimal(80), rolloverCents: 0, createdAt: nowISO(), updatedAt: nowISO() };
+
+    db.insert(budgets).values([
+      budgetGlobal, budgetGroceries, budgetDining, budgetRent, budgetTransport, budgetEntertainment,
+    ]).run();
   })();
 }

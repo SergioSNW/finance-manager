@@ -61,6 +61,18 @@ CREATE TABLE IF NOT EXISTS holding_transactions (
   created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS budgets (
+  id TEXT PRIMARY KEY,
+  category_id TEXT REFERENCES categories(id),
+  month INTEGER NOT NULL,
+  year INTEGER NOT NULL,
+  amount_cents INTEGER NOT NULL,
+  rollover_cents INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  UNIQUE(category_id, month, year)
+);
+
 CREATE INDEX IF NOT EXISTS idx_transactions_account_id ON transactions(account_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date);
 CREATE INDEX IF NOT EXISTS idx_transactions_category_id ON transactions(category_id);

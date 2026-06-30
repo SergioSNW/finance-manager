@@ -9,6 +9,7 @@ import {
 } from "@/server/queries/dashboard";
 import { getPortfolioValue } from "@/server/queries/holdings";
 import { AccountCard } from "@/components/account-card";
+import { DashboardBudgetSummary } from "@/components/dashboard-budget-summary";
 import { NetWorthChart } from "@/components/charts/net-worth-chart";
 import { CashFlowChart } from "@/components/charts/cash-flow-chart";
 import { SpendingDonut } from "@/components/charts/spending-donut";
@@ -82,6 +83,10 @@ export default function DashboardPage() {
               ))}
           </div>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <DashboardBudgetSummary />
       </div>
 
       <div>
