@@ -46,7 +46,7 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: flashScript }} />
       </head>
-      <body className="min-h-full flex">
+      <body className="min-h-full flex flex-col lg:flex-row">
         <ThemeProvider>
           <Nav />
           <main className="flex-1 overflow-auto bg-zinc-50 dark:bg-zinc-900">
