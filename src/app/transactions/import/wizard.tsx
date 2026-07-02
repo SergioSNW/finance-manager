@@ -165,7 +165,7 @@ export function CsvImportWizard({
     <div className="space-y-6">
       {step === "upload" && (
         <div
-          className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-300 p-12 dark:border-zinc-600"
+          className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-300 p-8 sm:p-12 dark:border-zinc-600"
           onClick={() => fileInputRef.current?.click()}
         >
           <p className="mb-2 text-3xl">📄</p>

@@ -29,7 +29,7 @@ export function CreateAccountForm() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 dark:bg-zinc-900">
+      <div className="mx-4 w-full max-w-md rounded-xl bg-white p-6 dark:bg-zinc-900">
         <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
           New Account
         </h2>

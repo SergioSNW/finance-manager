@@ -22,14 +22,14 @@ export function Nav() {
             <ThemeToggle />
           </div>
       </div>
-      <div className="flex overflow-x-auto px-2 pb-2 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-3 lg:pb-0">
+      <div className="flex flex-wrap gap-1.5 px-2 pb-2 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-3 lg:pb-0">
         {links.map((link) => (
           <Link
             key={link.href}
             href={link.href}
-            className="flex shrink-0 items-center gap-3 rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
-            <link.icon className="h-4 w-4" />
+            <link.icon className="h-4 w-4 shrink-0" />
             <span>{link.label}</span>
           </Link>
         ))}

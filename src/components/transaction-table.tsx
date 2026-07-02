@@ -25,14 +25,14 @@ export function TransactionTable({
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50">
-            <th className="px-4 py-2 font-medium text-zinc-500">Date</th>
-            <th className="px-4 py-2 font-medium text-zinc-500">Description</th>
-            <th className="px-4 py-2 font-medium text-zinc-500">Account</th>
-            <th className="px-4 py-2 font-medium text-zinc-500">Category</th>
-            <th className="px-4 py-2 text-right font-medium text-zinc-500">
+            <th className="px-3 py-2 font-medium text-zinc-500 sm:px-4">Date</th>
+            <th className="px-3 py-2 font-medium text-zinc-500 sm:px-4">Description</th>
+            <th className="hidden px-3 py-2 font-medium text-zinc-500 sm:table-cell sm:px-4">Account</th>
+            <th className="hidden px-3 py-2 font-medium text-zinc-500 sm:table-cell sm:px-4">Category</th>
+            <th className="px-3 py-2 text-right font-medium text-zinc-500 sm:px-4">
               Amount
             </th>
-            <th className="px-4 py-2 font-medium text-zinc-500"></th>
+            <th className="px-3 py-2 font-medium text-zinc-500 sm:px-4"></th>
           </tr>
         </thead>
         <tbody>
@@ -41,14 +41,14 @@ export function TransactionTable({
               key={tx.id}
               className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/30"
             >
-              <td className="px-4 py-2.5 text-zinc-500">
+              <td className="px-3 py-2.5 text-zinc-500 sm:px-4">
                 {formatDate(tx.date)}
               </td>
-              <td className="px-4 py-2.5 text-zinc-900 dark:text-zinc-100">
+              <td className="px-3 py-2.5 text-zinc-900 dark:text-zinc-100 sm:px-4">
                 {tx.description}
               </td>
-              <td className="px-4 py-2.5 text-zinc-500">{tx.accountName}</td>
-              <td className="px-4 py-2.5">
+              <td className="hidden px-3 py-2.5 text-zinc-500 sm:table-cell sm:px-4">{tx.accountName}</td>
+              <td className="hidden px-3 py-2.5 sm:table-cell sm:px-4">
                 {tx.categoryName ? (
                   <span
                     className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
@@ -61,10 +61,10 @@ export function TransactionTable({
                   </span>
                 ) : null}
               </td>
-              <td className="px-4 py-2.5 text-right">
+              <td className="px-3 py-2.5 text-right sm:px-4">
                 <AmountDisplay cents={tx.amount} />
               </td>
-              <td className="px-4 py-2.5">
+              <td className="px-3 py-2.5 sm:px-4">
                 <button
                   onClick={() => handleDelete(tx.id)}
                   disabled={deleting === tx.id}

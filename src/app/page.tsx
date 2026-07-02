@@ -39,7 +39,7 @@ export default async function DashboardPage() {
         Dashboard
       </h1>
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <SummaryCard
           title="Net Worth"
           value={netWorth}
@@ -63,12 +63,12 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <div className="mb-6 grid gap-6 lg:grid-cols-2">
+      <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <NetWorthChart data={netWorthHistory} />
         <CashFlowChart data={cashFlow} />
       </div>
 
-      <div className="mb-6 grid gap-6 lg:grid-cols-2">
+      <div className="mb-6 grid gap-4 lg:grid-cols-2">
         <SpendingDonut data={spending} />
         <div>
           <h2 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -104,10 +104,10 @@ export default async function DashboardPage() {
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50">
-                <th className="px-4 py-2 font-medium text-zinc-500">Date</th>
-                <th className="px-4 py-2 font-medium text-zinc-500">Description</th>
-                <th className="px-4 py-2 font-medium text-zinc-500">Account</th>
-                <th className="px-4 py-2 text-right font-medium text-zinc-500">
+                <th className="px-3 py-2 font-medium text-zinc-500 sm:px-4">Date</th>
+                <th className="px-3 py-2 font-medium text-zinc-500 sm:px-4">Description</th>
+                <th className="hidden px-3 py-2 font-medium text-zinc-500 sm:table-cell sm:px-4">Account</th>
+                <th className="px-3 py-2 text-right font-medium text-zinc-500 sm:px-4">
                   Amount
                 </th>
               </tr>
@@ -128,16 +128,16 @@ export default async function DashboardPage() {
                     key={tx.id}
                     className="border-b border-zinc-100 last:border-0 dark:border-zinc-800"
                   >
-                    <td className="px-4 py-2.5 text-zinc-500">
+                    <td className="px-3 py-2.5 text-zinc-500 sm:px-4">
                       {formatDate(tx.date)}
                     </td>
-                    <td className="px-4 py-2.5 text-zinc-900 dark:text-zinc-100">
+                    <td className="px-3 py-2.5 text-zinc-900 dark:text-zinc-100 sm:px-4">
                       {tx.description}
                     </td>
-                    <td className="px-4 py-2.5 text-zinc-500">
+                    <td className="hidden px-3 py-2.5 text-zinc-500 sm:table-cell sm:px-4">
                       {tx.accountName}
                     </td>
-                    <td className="px-4 py-2.5 text-right">
+                    <td className="px-3 py-2.5 text-right sm:px-4">
                       <AmountDisplay cents={tx.amount} />
                     </td>
                   </tr>

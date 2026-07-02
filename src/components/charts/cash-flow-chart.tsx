@@ -22,7 +22,7 @@ export function CashFlowChart({ data }: Props) {
       <h3 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
         Cash Flow
       </h3>
-      <div className="h-64">
+      <div className="h-48 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <CartesianGrid

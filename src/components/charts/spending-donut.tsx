@@ -49,7 +49,7 @@ export function SpendingDonut({ data }: Props) {
       <h3 className="mb-4 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
         Spending by Category
       </h3>
-      <div className="h-64">
+      <div className="h-48 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

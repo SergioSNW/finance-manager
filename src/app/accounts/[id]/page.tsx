@@ -68,10 +68,10 @@ export default async function AccountDetailPage({
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50">
-              <th className="px-4 py-2 font-medium text-zinc-500">Date</th>
-              <th className="px-4 py-2 font-medium text-zinc-500">Description</th>
-              <th className="px-4 py-2 font-medium text-zinc-500">Category</th>
-              <th className="px-4 py-2 text-right font-medium text-zinc-500">
+              <th className="px-3 py-2 sm:px-4 font-medium text-zinc-500">Date</th>
+              <th className="px-3 py-2 sm:px-4 font-medium text-zinc-500">Description</th>
+              <th className="hidden px-3 py-2 font-medium text-zinc-500 sm:table-cell sm:px-4">Category</th>
+              <th className="px-3 py-2 sm:px-4 text-right font-medium text-zinc-500">
                 Amount
               </th>
             </tr>
@@ -79,7 +79,7 @@ export default async function AccountDetailPage({
           <tbody>
             {transactions.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-zinc-400">
+                <td colSpan={4} className="px-3 py-8 sm:px-4 text-center text-zinc-400">
                   No transactions for this account
                 </td>
               </tr>
@@ -89,13 +89,13 @@ export default async function AccountDetailPage({
                   key={tx.id}
                   className="border-b border-zinc-100 last:border-0 dark:border-zinc-800"
                 >
-                  <td className="px-4 py-2.5 text-zinc-500">
+                  <td className="px-3 py-2.5 sm:px-4 text-zinc-500">
                     {formatDate(tx.date)}
                   </td>
-                  <td className="px-4 py-2.5 text-zinc-900 dark:text-zinc-100">
+                  <td className="px-3 py-2.5 sm:px-4 text-zinc-900 dark:text-zinc-100">
                     {tx.description}
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td className="hidden px-3 py-2.5 sm:table-cell sm:px-4">
                     {tx.categoryName && (
                       <span
                         className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
@@ -108,7 +108,7 @@ export default async function AccountDetailPage({
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2.5 text-right">
+                  <td className="px-3 py-2.5 sm:px-4 text-right">
                     <AmountDisplay cents={tx.amount} />
                   </td>
                 </tr>

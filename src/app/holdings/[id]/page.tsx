@@ -77,24 +77,24 @@ export default async function HoldingDetailPage({
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800/50">
-              <th className="px-4 py-2 font-medium text-zinc-500">Date</th>
-              <th className="px-4 py-2 font-medium text-zinc-500">Type</th>
-              <th className="px-4 py-2 text-right font-medium text-zinc-500">
+              <th className="px-3 py-2 sm:px-4 font-medium text-zinc-500">Date</th>
+              <th className="px-3 py-2 sm:px-4 font-medium text-zinc-500">Type</th>
+              <th className="px-3 py-2 sm:px-4 text-right font-medium text-zinc-500">
                 Shares
               </th>
-              <th className="px-4 py-2 text-right font-medium text-zinc-500">
+              <th className="px-3 py-2 sm:px-4 text-right font-medium text-zinc-500">
                 Price
               </th>
-              <th className="px-4 py-2 text-right font-medium text-zinc-500">
+              <th className="px-3 py-2 sm:px-4 text-right font-medium text-zinc-500">
                 Total
               </th>
-              <th className="px-4 py-2 font-medium text-zinc-500">Notes</th>
+              <th className="hidden px-3 py-2 font-medium text-zinc-500 sm:table-cell sm:px-4">Notes</th>
             </tr>
           </thead>
           <tbody>
             {txs.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-zinc-400">
+                <td colSpan={6} className="px-3 py-8 sm:px-4 text-center text-zinc-400">
                   No transactions recorded
                 </td>
               </tr>
@@ -104,10 +104,10 @@ export default async function HoldingDetailPage({
                   key={tx.id}
                   className="border-b border-zinc-100 last:border-0 dark:border-zinc-800"
                 >
-                  <td className="px-4 py-2.5 text-zinc-500">
+                  <td className="px-3 py-2.5 sm:px-4 text-zinc-500">
                     {formatDate(tx.date)}
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-3 py-2.5 sm:px-4">
                     <span
                       className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                         tx.type === "buy"
@@ -118,18 +118,18 @@ export default async function HoldingDetailPage({
                       {tx.type.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 text-right text-zinc-900 dark:text-zinc-100">
+                  <td className="px-3 py-2.5 sm:px-4 text-right text-zinc-900 dark:text-zinc-100">
                     {tx.shares.toFixed(4)}
                   </td>
-                  <td className="px-4 py-2.5 text-right">
+                  <td className="px-3 py-2.5 sm:px-4 text-right">
                     <AmountDisplay cents={tx.pricePerShare} />
                   </td>
-                  <td className="px-4 py-2.5 text-right">
+                  <td className="px-3 py-2.5 sm:px-4 text-right">
                     <AmountDisplay
                       cents={Math.round(tx.shares * tx.pricePerShare)}
                     />
                   </td>
-                  <td className="px-4 py-2.5 text-zinc-400">
+                  <td className="hidden px-3 py-2.5 text-zinc-400 sm:table-cell sm:px-4">
                     {tx.notes || "-"}
                   </td>
                 </tr>
