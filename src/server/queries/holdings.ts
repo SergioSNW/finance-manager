@@ -1,10 +1,10 @@
 import { getDb } from "@/lib/db";
-import { holdings, accounts } from "@/server/db/schema";
+import { holdings, accounts, holdingTransactions } from "@/server/db/schema";
 import { eq, asc } from "drizzle-orm";
 
-export function getHoldings() {
-  const db = getDb();
-  return db
+export async function getHoldings() {
+  const db = await getDb();
+  return await db
     .select({
       id: holdings.id,
       accountId: holdings.accountId,
@@ -23,9 +23,9 @@ export function getHoldings() {
     .all();
 }
 
-export function getHolding(id: string) {
-  const db = getDb();
-  return db
+export async function getHolding(id: string) {
+  const db = await getDb();
+  return await db
     .select({
       id: holdings.id,
       accountId: holdings.accountId,
@@ -44,10 +44,9 @@ export function getHolding(id: string) {
     .get() || null;
 }
 
-export function getHoldingTransactions(holdingId: string) {
-  const db = getDb();
-  const { holdingTransactions } = require("@/server/db/schema");
-  return db
+export async function getHoldingTransactions(holdingId: string) {
+  const db = await getDb();
+  return await db
     .select()
     .from(holdingTransactions)
     .where(eq(holdingTransactions.holdingId, holdingId))
@@ -55,9 +54,8 @@ export function getHoldingTransactions(holdingId: string) {
     .all();
 }
 
-export function getPortfolioValue() {
-  const db = getDb();
-  const all = getHoldings();
+export async function getPortfolioValue() {
+  const all = await getHoldings();
   return all.reduce((sum, h) => {
     const price = h.currentPrice || h.avgCostPerShare;
     return sum + h.shares * price;

@@ -1,14 +1,14 @@
 "use server";
 
 import { getDb } from "@/lib/db";
-import { budgets } from "@/server/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { budgets, transactions } from "@/server/db/schema";
+import { eq, and, gte, lte, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { generateId, nowISO } from "@/lib/format";
 import { getPreviousBudget } from "@/server/queries/budgets";
 
 export async function createBudget(formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const categoryId = (formData.get("categoryId") as string) || null;
   const month = parseInt(formData.get("month") as string);
@@ -24,12 +24,12 @@ export async function createBudget(formData: FormData) {
     return { error: "Invalid amount" };
   }
 
-  const previous = getPreviousBudget(categoryId, month, year);
+  const previous = await getPreviousBudget(categoryId, month, year);
   const rolloverCents = previous
-    ? Math.max(0, previous.amountCents + previous.rolloverCents - getActualSpentForBudget(previous.id))
+    ? Math.max(0, previous.amountCents + previous.rolloverCents - await getActualSpentForBudget(previous.id))
     : 0;
 
-  db.insert(budgets)
+  await db.insert(budgets)
     .values({
       id: generateId(),
       categoryId: categoryId || null,
@@ -48,7 +48,7 @@ export async function createBudget(formData: FormData) {
 }
 
 export async function updateBudget(id: string, formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const amountStr = formData.get("amount") as string;
   if (!amountStr) return { error: "Amount is required" };
@@ -58,7 +58,7 @@ export async function updateBudget(id: string, formData: FormData) {
     return { error: "Invalid amount" };
   }
 
-  db.update(budgets)
+  await db.update(budgets)
     .set({ amountCents, updatedAt: nowISO() })
     .where(eq(budgets.id, id))
     .run();
@@ -69,28 +69,25 @@ export async function updateBudget(id: string, formData: FormData) {
 }
 
 export async function deleteBudget(id: string) {
-  const db = getDb();
-  db.delete(budgets).where(eq(budgets.id, id)).run();
+  const db = await getDb();
+  await db.delete(budgets).where(eq(budgets.id, id)).run();
 
   revalidatePath("/budgets");
   revalidatePath("/");
   return { success: true };
 }
 
-function getActualSpentForBudget(budgetId: string): number {
-  const db = getDb();
-  const b = db.select().from(budgets).where(eq(budgets.id, budgetId)).get();
+async function getActualSpentForBudget(budgetId: string): Promise<number> {
+  const db = await getDb();
+  const b = await db.select().from(budgets).where(eq(budgets.id, budgetId)).get();
   if (!b) return 0;
-
-  const { transactions } = require("@/server/db/schema");
-  const { and, gte, lte, sql } = require("drizzle-orm");
 
   const monthStart = new Date(b.year, b.month - 1, 1).toISOString().slice(0, 10);
   const monthEnd = new Date(b.year, b.month, 0).toISOString().slice(0, 10);
 
   if (b.categoryId) {
-    const result = db
-      .select({ total: sql`COALESCE(SUM(${transactions.amount}), 0)` })
+    const result = await db
+      .select({ total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)` })
       .from(transactions)
       .where(
         and(
@@ -101,11 +98,11 @@ function getActualSpentForBudget(budgetId: string): number {
         )
       )
       .get();
-    return Math.abs(result?.total || 0);
+    return Math.abs(result?.total ?? 0);
   }
 
-  const result = db
-    .select({ total: sql`COALESCE(SUM(${transactions.amount}), 0)` })
+  const result = await db
+    .select({ total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)` })
     .from(transactions)
     .where(
       and(
@@ -115,5 +112,5 @@ function getActualSpentForBudget(budgetId: string): number {
       )
     )
     .get();
-  return Math.abs(result?.total || 0);
+  return Math.abs(result?.total ?? 0);
 }

@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/db";
 import { transactions, categories } from "@/server/db/schema";
 import { eq, sql, and, gte, lte } from "drizzle-orm";
+import { getPortfolioValue } from "./holdings";
 
 export interface NetWorthPoint {
   month: string;
@@ -19,8 +20,8 @@ export interface SpendingByCategory {
   total: number;
 }
 
-export function getNetWorthHistory(months = 12): NetWorthPoint[] {
-  const db = getDb();
+export async function getNetWorthHistory(months = 12): Promise<NetWorthPoint[]> {
+  const db = await getDb();
   const points: NetWorthPoint[] = [];
 
   for (let i = months - 1; i >= 0; i--) {
@@ -31,7 +32,7 @@ export function getNetWorthHistory(months = 12): NetWorthPoint[] {
       .slice(0, 10);
     const monthLabel = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 
-    const result = db
+    const result = await db
       .select({
         total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)`,
       })
@@ -39,9 +40,8 @@ export function getNetWorthHistory(months = 12): NetWorthPoint[] {
       .where(lte(transactions.date, monthStart))
       .get();
 
-    const { getPortfolioValue } = require("./holdings");
     const totalTransactions = result?.total || 0;
-    const portfolioValue = getPortfolioValue();
+    const portfolioValue = await getPortfolioValue();
 
     points.push({
       month: monthLabel,
@@ -52,8 +52,8 @@ export function getNetWorthHistory(months = 12): NetWorthPoint[] {
   return points;
 }
 
-export function getCashFlow(months = 6): CashFlowPoint[] {
-  const db = getDb();
+export async function getCashFlow(months = 6): Promise<CashFlowPoint[]> {
+  const db = await getDb();
   const points: CashFlowPoint[] = [];
 
   for (let i = months - 1; i >= 0; i--) {
@@ -65,7 +65,7 @@ export function getCashFlow(months = 6): CashFlowPoint[] {
     const monthEnd = new Date(year, month + 1, 0).toISOString().slice(0, 10);
     const monthLabel = `${year}-${String(month + 1).padStart(2, "0")}`;
 
-    const income = db
+    const income = await db
       .select({ total: sql<number>`COALESCE(SUM(amount), 0)` })
       .from(transactions)
       .where(
@@ -77,7 +77,7 @@ export function getCashFlow(months = 6): CashFlowPoint[] {
       )
       .get();
 
-    const expenses = db
+    const expenses = await db
       .select({ total: sql<number>`COALESCE(SUM(amount), 0)` })
       .from(transactions)
       .where(
@@ -99,15 +99,15 @@ export function getCashFlow(months = 6): CashFlowPoint[] {
   return points;
 }
 
-export function getSpendingByCategory(
+export async function getSpendingByCategory(
   year: number,
   month: number
-): SpendingByCategory[] {
-  const db = getDb();
+): Promise<SpendingByCategory[]> {
+  const db = await getDb();
   const monthStart = new Date(year, month - 1, 1).toISOString().slice(0, 10);
   const monthEnd = new Date(year, month, 0).toISOString().slice(0, 10);
 
-  return db
+  return await db
     .select({
       categoryName: categories.name,
       categoryColor: categories.color,

@@ -10,8 +10,8 @@ export interface TransactionFilters {
   search?: string;
 }
 
-export function getTransactions(filters?: TransactionFilters) {
-  const db = getDb();
+export async function getTransactions(filters?: TransactionFilters) {
+  const db = await getDb();
 
   const conditions = [];
   if (filters?.accountId) conditions.push(eq(transactions.accountId, filters.accountId));
@@ -24,7 +24,7 @@ export function getTransactions(filters?: TransactionFilters) {
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
-  return db
+  return await db
     .select({
       id: transactions.id,
       accountId: transactions.accountId,
@@ -48,9 +48,9 @@ export function getTransactions(filters?: TransactionFilters) {
     .all();
 }
 
-export function getTransaction(id: string) {
-  const db = getDb();
-  return db
+export async function getTransaction(id: string) {
+  const db = await getDb();
+  return await db
     .select({
       id: transactions.id,
       accountId: transactions.accountId,
@@ -73,9 +73,9 @@ export function getTransaction(id: string) {
     .get() || null;
 }
 
-export function getRecentTransactions(limit = 5) {
-  const db = getDb();
-  return db
+export async function getRecentTransactions(limit = 5) {
+  const db = await getDb();
+  return await db
     .select({
       id: transactions.id,
       accountId: transactions.accountId,

@@ -17,22 +17,21 @@ import { AmountDisplay } from "@/components/amount-display";
 import { formatDate } from "@/lib/format";
 import Link from "next/link";
 
-export default function DashboardPage() {
-  const accounts = getAccounts();
-  const recent = getRecentTransactions(5);
-  const portfolioValue = getPortfolioValue();
+export default async function DashboardPage() {
+  const accounts = await getAccounts();
+  const recent = await getRecentTransactions(5);
+  const portfolioValue = await getPortfolioValue();
 
   const today = new Date();
-  const netWorthHistory = getNetWorthHistory(12);
-  const cashFlow = getCashFlow(6);
-  const spending = getSpendingByCategory(
+  const netWorthHistory = await getNetWorthHistory(12);
+  const cashFlow = await getCashFlow(6);
+  const spending = await getSpendingByCategory(
     today.getFullYear(),
     today.getMonth() + 1
   );
 
   const totalBalance = accounts.reduce((s, a) => s + a.balance, 0);
   const netWorth = totalBalance + portfolioValue;
-  const currentNetWorth = netWorthHistory[netWorthHistory.length - 1]?.netWorth || 0;
 
   return (
     <div className="p-4 lg:p-6">

@@ -8,9 +8,10 @@ import { EmptyState } from "@/components/empty-state";
 import { AmountDisplay } from "@/components/amount-display";
 import { CreateHoldingForm } from "./create-form";
 
-export default function HoldingsPage() {
-  const holdings = getHoldings();
-  const investmentAccounts = getAccounts().filter(
+export default async function HoldingsPage() {
+  const holdings = await getHoldings();
+  const allAccounts = await getAccounts();
+  const investmentAccounts = allAccounts.filter(
     (a) => a.type === "investment"
   );
 

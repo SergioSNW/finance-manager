@@ -4,9 +4,9 @@ import { getAccounts } from "@/server/queries/accounts";
 import { getCategories } from "@/server/queries/categories";
 import { CsvImportWizard } from "./wizard";
 
-export default function ImportPage() {
-  const accounts = getAccounts();
-  const categories = getCategories();
+export default async function ImportPage() {
+  const accounts = await getAccounts();
+  const categories = await getCategories();
 
   return (
     <div className="mx-auto max-w-2xl p-4 lg:p-6">

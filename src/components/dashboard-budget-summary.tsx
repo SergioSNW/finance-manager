@@ -2,16 +2,15 @@ import { getBudgets, getAlertsForDashboard, getTotalSavings } from "@/server/que
 import { AmountDisplay } from "@/components/amount-display";
 import Link from "next/link";
 
-export function DashboardBudgetSummary() {
+export async function DashboardBudgetSummary() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
-  const budgets = getBudgets(month, year);
-  const alerts = getAlertsForDashboard();
-  const totalSavings = getTotalSavings();
+  const budgets = await getBudgets(month, year);
+  const alerts = await getAlertsForDashboard();
+  const totalSavings = await getTotalSavings();
 
   const globalBudget = budgets.find((b) => b.categoryId === null);
-  const categoryBudgets = budgets.filter((b) => b.categoryId !== null);
 
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-950">

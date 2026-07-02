@@ -4,8 +4,8 @@ import Link from "next/link";
 import { getCategories } from "@/server/queries/categories";
 import { BudgetForm } from "@/components/budget-form";
 
-export default function NewBudgetPage() {
-  const categories = getCategories();
+export default async function NewBudgetPage() {
+  const categories = await getCategories();
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();

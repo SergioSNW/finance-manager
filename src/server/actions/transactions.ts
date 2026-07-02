@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { generateId, nowISO, centsFromDecimal } from "@/lib/format";
 
 export async function createTransaction(formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const accountId = formData.get("accountId") as string;
   const amountStr = formData.get("amount") as string;
@@ -29,7 +29,7 @@ export async function createTransaction(formData: FormData) {
     amount = Math.abs(amount);
   }
 
-  db.insert(transactions)
+  await db.insert(transactions)
     .values({
       id: generateId(),
       accountId,
@@ -50,7 +50,7 @@ export async function createTransaction(formData: FormData) {
 }
 
 export async function updateTransaction(id: string, formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const amountStr = formData.get("amount") as string;
   const description = formData.get("description") as string;
@@ -61,10 +61,10 @@ export async function updateTransaction(id: string, formData: FormData) {
     return { error: "Amount, description, and date are required" };
   }
 
-  let amount = centsFromDecimal(parseFloat(amountStr));
+  const amount = centsFromDecimal(parseFloat(amountStr));
   if (isNaN(amount)) return { error: "Invalid amount" };
 
-  db.update(transactions)
+  await db.update(transactions)
     .set({
       amount,
       description,
@@ -81,11 +81,11 @@ export async function updateTransaction(id: string, formData: FormData) {
 }
 
 export async function deleteTransaction(id: string) {
-  const db = getDb();
-  const tx = db.select().from(transactions).where(eq(transactions.id, id)).get();
+  const db = await getDb();
+  const tx = await db.select().from(transactions).where(eq(transactions.id, id)).get();
   if (!tx) return { error: "Transaction not found" };
 
-  db.delete(transactions).where(eq(transactions.id, id)).run();
+  await db.delete(transactions).where(eq(transactions.id, id)).run();
 
   revalidatePath("/transactions");
   revalidatePath(`/accounts/${tx.accountId}`);
@@ -94,11 +94,11 @@ export async function deleteTransaction(id: string) {
 }
 
 export async function toggleReconciled(id: string) {
-  const db = getDb();
-  const tx = db.select().from(transactions).where(eq(transactions.id, id)).get();
+  const db = await getDb();
+  const tx = await db.select().from(transactions).where(eq(transactions.id, id)).get();
   if (!tx) return { error: "Transaction not found" };
 
-  db.update(transactions)
+  await db.update(transactions)
     .set({ isReconciled: !tx.isReconciled, updatedAt: nowISO() })
     .where(eq(transactions.id, id))
     .run();

@@ -5,8 +5,8 @@ import { AccountCard } from "@/components/account-card";
 import { EmptyState } from "@/components/empty-state";
 import { CreateAccountForm } from "./create-form";
 
-export default function AccountsPage() {
-  const accounts = getAccounts();
+export default async function AccountsPage() {
+  const accounts = await getAccounts();
 
   return (
     <div className="p-4 lg:p-6">

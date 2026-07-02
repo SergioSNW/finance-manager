@@ -5,8 +5,6 @@ import { ensureDbInitialized } from "@/lib/init";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Nav } from "@/components/nav";
 
-ensureDbInitialized();
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,11 +30,13 @@ const flashScript = `
 })();
 `;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  await ensureDbInitialized();
+
   return (
     <html
       lang="en"

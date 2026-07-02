@@ -13,10 +13,10 @@ export default async function HoldingDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const holding = getHolding(id);
+  const holding = await getHolding(id);
   if (!holding) notFound();
 
-  const txs = getHoldingTransactions(id);
+  const txs = await getHoldingTransactions(id);
   const price = holding.currentPrice || holding.avgCostPerShare;
   const value = holding.shares * price;
   const cost = holding.shares * holding.avgCostPerShare;

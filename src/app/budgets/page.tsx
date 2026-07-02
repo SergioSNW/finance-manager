@@ -4,11 +4,11 @@ import Link from "next/link";
 import { getBudgets } from "@/server/queries/budgets";
 import { BudgetGrid } from "@/components/budget-grid";
 
-export default function BudgetsPage() {
+export default async function BudgetsPage() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
-  const budgets = getBudgets(month, year);
+  const budgets = await getBudgets(month, year);
 
   const globalBudget = budgets.find((b) => b.categoryId === null);
   const categoryBudgets = budgets.filter((b) => b.categoryId !== null);

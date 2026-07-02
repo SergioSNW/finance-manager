@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { generateId, nowISO } from "@/lib/format";
 
 export async function createCategory(formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const name = formData.get("name") as string;
   const type = formData.get("type") as string;
@@ -21,11 +21,11 @@ export async function createCategory(formData: FormData) {
     return { error: "Invalid category type" };
   }
 
-  db.insert(categories)
+  await db.insert(categories)
     .values({
       id: generateId(),
       name,
-      type: type as any,
+      type: type as "income" | "expense" | "transfer",
       color,
       createdAt: nowISO(),
     })
@@ -37,14 +37,14 @@ export async function createCategory(formData: FormData) {
 }
 
 export async function updateCategory(id: string, formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const name = formData.get("name") as string;
   const color = formData.get("color") as string;
 
   if (!name) return { error: "Name is required" };
 
-  db.update(categories)
+  await db.update(categories)
     .set({ name, color: color || "#6366f1" })
     .where(eq(categories.id, id))
     .run();
@@ -55,9 +55,9 @@ export async function updateCategory(id: string, formData: FormData) {
 }
 
 export async function deleteCategory(id: string) {
-  const db = getDb();
+  const db = await getDb();
 
-  const result = db
+  const result = await db
     .select({ count: sql<number>`COUNT(*)` })
     .from(transactions)
     .where(eq(transactions.categoryId, id))
@@ -67,7 +67,7 @@ export async function deleteCategory(id: string) {
     return { error: "Cannot delete a category that has transactions" };
   }
 
-  db.delete(categories).where(eq(categories.id, id)).run();
+  await db.delete(categories).where(eq(categories.id, id)).run();
 
   revalidatePath("/categories");
   revalidatePath("/");

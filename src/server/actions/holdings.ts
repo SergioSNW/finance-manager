@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { generateId, nowISO, centsFromDecimal } from "@/lib/format";
 
 export async function createHolding(formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const accountId = formData.get("accountId") as string;
   const symbol = formData.get("symbol") as string;
@@ -27,7 +27,7 @@ export async function createHolding(formData: FormData) {
   }
 
   const holdingId = generateId();
-  db.insert(holdings)
+  await db.insert(holdings)
     .values({
       id: holdingId,
       accountId,
@@ -41,7 +41,7 @@ export async function createHolding(formData: FormData) {
     })
     .run();
 
-  db.insert(holdingTransactions)
+  await db.insert(holdingTransactions)
     .values({
       id: generateId(),
       holdingId,
@@ -59,7 +59,7 @@ export async function createHolding(formData: FormData) {
 }
 
 export async function updateHoldingPrice(id: string, formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const priceStr = formData.get("currentPrice") as string;
   if (!priceStr) return { error: "Price is required" };
@@ -67,7 +67,7 @@ export async function updateHoldingPrice(id: string, formData: FormData) {
   const currentPrice = centsFromDecimal(parseFloat(priceStr));
   if (isNaN(currentPrice)) return { error: "Invalid price" };
 
-  db.update(holdings)
+  await db.update(holdings)
     .set({ currentPrice, updatedAt: nowISO() })
     .where(eq(holdings.id, id))
     .run();
@@ -79,7 +79,7 @@ export async function updateHoldingPrice(id: string, formData: FormData) {
 }
 
 export async function addBuyTransaction(holdingId: string, formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const sharesStr = formData.get("shares") as string;
   const priceStr = formData.get("pricePerShare") as string;
@@ -97,7 +97,7 @@ export async function addBuyTransaction(holdingId: string, formData: FormData) {
     return { error: "Invalid shares or price" };
   }
 
-  db.insert(holdingTransactions)
+  await db.insert(holdingTransactions)
     .values({
       id: generateId(),
       holdingId,
@@ -110,12 +110,13 @@ export async function addBuyTransaction(holdingId: string, formData: FormData) {
     })
     .run();
 
-  const h = db.select().from(holdings).where(eq(holdings.id, holdingId)).get()!;
+  const h = await db.select().from(holdings).where(eq(holdings.id, holdingId)).get();
+  if (!h) return { error: "Holding not found" };
   const totalCost = h.avgCostPerShare * h.shares + pricePerShare * shares;
   const totalShares = h.shares + shares;
   const newAvg = Math.round(totalCost / totalShares);
 
-  db.update(holdings)
+  await db.update(holdings)
     .set({
       shares: totalShares,
       avgCostPerShare: newAvg,
@@ -134,7 +135,7 @@ export async function addSellTransaction(
   holdingId: string,
   formData: FormData
 ) {
-  const db = getDb();
+  const db = await getDb();
 
   const sharesStr = formData.get("shares") as string;
   const priceStr = formData.get("pricePerShare") as string;
@@ -152,12 +153,13 @@ export async function addSellTransaction(
     return { error: "Invalid shares or price" };
   }
 
-  const h = db.select().from(holdings).where(eq(holdings.id, holdingId)).get()!;
+  const h = await db.select().from(holdings).where(eq(holdings.id, holdingId)).get();
+  if (!h) return { error: "Holding not found" };
   if (shares > h.shares) {
     return { error: "Cannot sell more shares than owned" };
   }
 
-  db.insert(holdingTransactions)
+  await db.insert(holdingTransactions)
     .values({
       id: generateId(),
       holdingId,
@@ -170,7 +172,7 @@ export async function addSellTransaction(
     })
     .run();
 
-  db.update(holdings)
+  await db.update(holdings)
     .set({
       shares: h.shares - shares,
       updatedAt: nowISO(),

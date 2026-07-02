@@ -4,9 +4,9 @@ import { getAccounts } from "@/server/queries/accounts";
 import { getCategories } from "@/server/queries/categories";
 import { TransactionForm } from "@/components/transaction-form";
 
-export default function NewTransactionPage() {
-  const accounts = getAccounts();
-  const categories = getCategories();
+export default async function NewTransactionPage() {
+  const accounts = await getAccounts();
+  const categories = await getCategories();
 
   return (
     <div className="mx-auto max-w-lg p-4 lg:p-6">

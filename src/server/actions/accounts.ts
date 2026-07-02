@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { generateId, nowISO } from "@/lib/format";
 
 export async function createAccount(formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const name = formData.get("name") as string;
   const type = formData.get("type") as string;
@@ -22,11 +22,11 @@ export async function createAccount(formData: FormData) {
     return { error: "Invalid account type" };
   }
 
-  db.insert(accounts)
+  await db.insert(accounts)
     .values({
       id: generateId(),
       name,
-      type: type as any,
+      type: type as "checking" | "savings" | "credit" | "investment" | "cash",
       currency,
       isActive: true,
       createdAt: nowISO(),
@@ -40,7 +40,7 @@ export async function createAccount(formData: FormData) {
 }
 
 export async function updateAccount(id: string, formData: FormData) {
-  const db = getDb();
+  const db = await getDb();
 
   const name = formData.get("name") as string;
   const type = formData.get("type") as string;
@@ -49,8 +49,8 @@ export async function updateAccount(id: string, formData: FormData) {
     return { error: "Name and type are required" };
   }
 
-  db.update(accounts)
-    .set({ name, type: type as any, updatedAt: nowISO() })
+  await db.update(accounts)
+    .set({ name, type: type as "checking" | "savings" | "credit" | "investment" | "cash", updatedAt: nowISO() })
     .where(eq(accounts.id, id))
     .run();
 
@@ -61,11 +61,11 @@ export async function updateAccount(id: string, formData: FormData) {
 }
 
 export async function toggleAccountActive(id: string) {
-  const db = getDb();
-  const account = db.select().from(accounts).where(eq(accounts.id, id)).get();
+  const db = await getDb();
+  const account = await db.select().from(accounts).where(eq(accounts.id, id)).get();
   if (!account) return { error: "Account not found" };
 
-  db.update(accounts)
+  await db.update(accounts)
     .set({ isActive: !account.isActive, updatedAt: nowISO() })
     .where(eq(accounts.id, id))
     .run();

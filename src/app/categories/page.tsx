@@ -4,8 +4,8 @@ import { getCategories } from "@/server/queries/categories";
 import { CategoryList } from "@/components/category-list";
 import { EmptyState } from "@/components/empty-state";
 
-export default function CategoriesPage() {
-  const categories = getCategories();
+export default async function CategoriesPage() {
+  const categories = await getCategories();
 
   return (
     <div className="p-4 lg:p-6">

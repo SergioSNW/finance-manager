@@ -1,11 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import {
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from "@/server/actions/categories";
+import { createCategory } from "@/server/actions/categories";
 import type { Category } from "@/types";
 
 export function CategoryList({
@@ -13,7 +9,6 @@ export function CategoryList({
 }: {
   categories: Category[];
 }) {
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [showNew, setShowNew] = useState(false);
   const wrappedCreate = async (_prev: unknown, fd: FormData) => createCategory(fd);
   const [createState, createAction, creating] = useActionState(

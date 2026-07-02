@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 
 export default async function EditBudgetPage(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params;
-  const budget = getBudget(id);
+  const budget = await getBudget(id);
   if (!budget) notFound();
 
   return (

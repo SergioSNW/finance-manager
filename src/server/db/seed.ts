@@ -1,14 +1,12 @@
 import { getDb } from "@/lib/db";
 import { accounts, categories, transactions, holdings, holdingTransactions, budgets } from "./schema";
-import { generateId, nowISO, todayISO, centsFromDecimal } from "@/lib/format";
+import { generateId, nowISO, centsFromDecimal } from "@/lib/format";
 
-export function seed() {
-  const db = getDb();
+export async function seed() {
+  const db = await getDb();
 
-  const sqlite = db.$client;
-
-  sqlite.transaction(() => {
-    const existing = db.select().from(accounts).all();
+  await db.transaction(async (tx) => {
+    const existing = await tx.select().from(accounts).all();
     if (existing.length > 0) return;
 
     const accChecking = {
@@ -28,7 +26,7 @@ export function seed() {
       currency: "USD", isActive: true, createdAt: nowISO(), updatedAt: nowISO(),
     };
 
-    db.insert(accounts).values([accChecking, accSavings, accCredit, accInvestment]).run();
+    await tx.insert(accounts).values([accChecking, accSavings, accCredit, accInvestment]).run();
 
     const catIncome = { id: generateId(), name: "Salary", type: "income" as const, color: "#22c55e", icon: "briefcase", parentId: null, createdAt: nowISO() };
     const catFreelance = { id: generateId(), name: "Freelance", type: "income" as const, color: "#16a34a", icon: "code", parentId: null, createdAt: nowISO() };
@@ -40,7 +38,7 @@ export function seed() {
     const catEntertainment = { id: generateId(), name: "Entertainment", type: "expense" as const, color: "#ec4899", icon: "film", parentId: null, createdAt: nowISO() };
     const catTransfer = { id: generateId(), name: "Transfer", type: "transfer" as const, color: "#64748b", icon: "arrow-left-right", parentId: null, createdAt: nowISO() };
 
-    db.insert(categories).values([
+    await tx.insert(categories).values([
       catIncome, catFreelance, catGroceries, catDining, catRent,
       catTransport, catUtilities, catEntertainment, catTransfer,
     ]).run();
@@ -63,7 +61,7 @@ export function seed() {
     const tx10 = { id: generateId(), accountId: accChecking.id, amount: centsFromDecimal(-500), description: "Credit card payment", categoryId: catTransfer.id, date: daysAgo(1), isReconciled: false, createdAt: nowISO(), updatedAt: nowISO() };
     const tx11 = { id: generateId(), accountId: accChecking.id, amount: centsFromDecimal(-2000), description: "Transfer to brokerage", categoryId: catTransfer.id, date: daysAgo(30), isReconciled: true, createdAt: nowISO(), updatedAt: nowISO() };
 
-    db.insert(transactions).values([tx1, tx2, tx3, tx4, tx5, tx6, tx7, tx8, tx9, tx10, tx11]).run();
+    await tx.insert(transactions).values([tx1, tx2, tx3, tx4, tx5, tx6, tx7, tx8, tx9, tx10, tx11]).run();
 
     const holdingVOO = {
       id: generateId(), accountId: accInvestment.id, symbol: "VOO",
@@ -81,14 +79,14 @@ export function seed() {
       currentPrice: centsFromDecimal(70), createdAt: nowISO(), updatedAt: nowISO(),
     };
 
-    db.insert(holdings).values([holdingVOO, holdingAAPL, holdingBND]).run();
+    await tx.insert(holdings).values([holdingVOO, holdingAAPL, holdingBND]).run();
 
     const ht1 = { id: generateId(), holdingId: holdingVOO.id, type: "buy" as const, shares: 10, pricePerShare: centsFromDecimal(450), date: daysAgo(30), notes: "Initial purchase", createdAt: nowISO() };
     const ht2 = { id: generateId(), holdingId: holdingAAPL.id, type: "buy" as const, shares: 3, pricePerShare: centsFromDecimal(170), date: daysAgo(60), notes: null, createdAt: nowISO() };
     const ht3 = { id: generateId(), holdingId: holdingAAPL.id, type: "buy" as const, shares: 2, pricePerShare: centsFromDecimal(182), date: daysAgo(20), notes: "Added position", createdAt: nowISO() };
     const ht4 = { id: generateId(), holdingId: holdingBND.id, type: "buy" as const, shares: 20, pricePerShare: centsFromDecimal(72), date: daysAgo(45), notes: null, createdAt: nowISO() };
 
-    db.insert(holdingTransactions).values([ht1, ht2, ht3, ht4]).run();
+    await tx.insert(holdingTransactions).values([ht1, ht2, ht3, ht4]).run();
 
     const now = new Date();
     const currentMonth = now.getMonth() + 1;
@@ -101,8 +99,8 @@ export function seed() {
     const budgetTransport = { id: generateId(), categoryId: catTransport.id, month: currentMonth, year: currentYear, amountCents: centsFromDecimal(100), rolloverCents: 22, createdAt: nowISO(), updatedAt: nowISO() };
     const budgetEntertainment = { id: generateId(), categoryId: catEntertainment.id, month: currentMonth, year: currentYear, amountCents: centsFromDecimal(80), rolloverCents: 0, createdAt: nowISO(), updatedAt: nowISO() };
 
-    db.insert(budgets).values([
+    await tx.insert(budgets).values([
       budgetGlobal, budgetGroceries, budgetDining, budgetRent, budgetTransport, budgetEntertainment,
     ]).run();
-  })();
+  });
 }

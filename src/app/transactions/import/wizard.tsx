@@ -40,7 +40,6 @@ export function CsvImportWizard({
     errors: string[];
   } | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [rawRows, setRawRows] = useState<CsvRow[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function parseCSV(text: string): ParsedPreview {
@@ -158,7 +157,6 @@ export function CsvImportWizard({
     const rows = buildRows();
     const res = await importCsv({ rows, accountId, categoryId: categoryId || undefined });
     setResult(res);
-    setRawRows([]);
     setStep("result");
     setProcessing(false);
   }

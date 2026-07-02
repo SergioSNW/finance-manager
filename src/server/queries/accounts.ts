@@ -2,9 +2,9 @@ import { getDb } from "@/lib/db";
 import { accounts, transactions } from "@/server/db/schema";
 import { eq, sql } from "drizzle-orm";
 
-export function getAccounts() {
-  const db = getDb();
-  return db
+export async function getAccounts() {
+  const db = await getDb();
+  return await db
     .select({
       id: accounts.id,
       name: accounts.name,
@@ -22,9 +22,9 @@ export function getAccounts() {
     .all();
 }
 
-export function getAccountById(id: string) {
-  const db = getDb();
-  const rows = db
+export async function getAccountById(id: string) {
+  const db = await getDb();
+  const rows = await db
     .select({
       id: accounts.id,
       name: accounts.name,
@@ -44,14 +44,14 @@ export function getAccountById(id: string) {
   return rows[0] || null;
 }
 
-export function getAccount(id: string) {
-  const db = getDb();
-  return db.select().from(accounts).where(eq(accounts.id, id)).get() || null;
+export async function getAccount(id: string) {
+  const db = await getDb();
+  return await db.select().from(accounts).where(eq(accounts.id, id)).get() || null;
 }
 
-export function getAccountBalance(accountId: string): number {
-  const db = getDb();
-  const result = db
+export async function getAccountBalance(accountId: string): Promise<number> {
+  const db = await getDb();
+  const result = await db
     .select({ total: sql<number>`COALESCE(SUM(amount), 0)` })
     .from(transactions)
     .where(eq(transactions.accountId, accountId))

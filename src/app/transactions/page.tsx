@@ -17,13 +17,13 @@ export default async function TransactionsPage({
   }>;
 }) {
   const filters = await searchParams;
-  const transactions = getTransactions({
+  const transactions = await getTransactions({
     accountId: filters.accountId,
     categoryId: filters.categoryId,
     search: filters.search,
   });
-  const accounts = getAccounts();
-  const categories = getCategories();
+  const accounts = await getAccounts();
+  const categories = await getCategories();
 
   return (
     <div className="p-4 lg:p-6">

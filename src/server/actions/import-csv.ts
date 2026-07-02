@@ -2,7 +2,7 @@
 
 import { getDb } from "@/lib/db";
 import { transactions } from "@/server/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { generateId, nowISO, centsFromDecimal } from "@/lib/format";
 
@@ -50,7 +50,7 @@ export async function importCsv(data: {
   accountId: string;
   categoryId?: string;
 }) {
-  const db = getDb();
+  const db = await getDb();
   const result: ImportResult = { imported: 0, skipped: 0, errors: [] };
 
   for (const row of data.rows) {
@@ -72,7 +72,7 @@ export async function importCsv(data: {
         continue;
       }
 
-      const existing = db
+      const existing = await db
         .select({ id: transactions.id })
         .from(transactions)
         .where(
@@ -89,7 +89,7 @@ export async function importCsv(data: {
         continue;
       }
 
-      db.insert(transactions)
+      await db.insert(transactions)
         .values({
           id: generateId(),
           accountId: data.accountId,
@@ -104,8 +104,8 @@ export async function importCsv(data: {
         .run();
 
       result.imported++;
-    } catch (e: any) {
-      result.errors.push(e.message || "Unknown error");
+    } catch (e: unknown) {
+      result.errors.push(e instanceof Error ? e.message : "Unknown error");
     }
   }
 

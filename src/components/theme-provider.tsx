@@ -29,14 +29,16 @@ function applyTheme(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [mounted, setMounted] = useState(false);
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      return getStoredTheme();
+    }
+    return "system";
+  });
 
   useEffect(() => {
     const stored = getStoredTheme();
-    setThemeState(stored);
     applyTheme(stored);
-    setMounted(true);
 
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = () => {

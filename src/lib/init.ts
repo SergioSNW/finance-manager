@@ -1,11 +1,11 @@
 let initialized = false;
 
-export function ensureDbInitialized() {
+export async function ensureDbInitialized() {
   if (initialized) return;
   initialized = true;
 
-  const { migrate } = require("@/server/db/migrate");
-  const { seed } = require("@/server/db/seed");
-  migrate();
-  seed();
+  const { migrate } = await import("@/server/db/migrate");
+  const { seed } = await import("@/server/db/seed");
+  await migrate();
+  await seed();
 }

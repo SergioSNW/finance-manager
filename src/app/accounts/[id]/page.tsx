@@ -3,7 +3,7 @@ import { getAccount, getAccountBalance } from "@/server/queries/accounts";
 import { getTransactions } from "@/server/queries/transactions";
 import { AmountDisplay } from "@/components/amount-display";
 import { BalanceHistoryChart } from "@/components/charts/balance-history";
-import { formatDate, formatCurrency } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import Link from "next/link";
 import { getNetWorthHistory } from "@/server/queries/dashboard";
 
@@ -21,13 +21,13 @@ export default async function AccountDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const account = getAccount(id);
+  const account = await getAccount(id);
   if (!account) notFound();
 
-  const balance = getAccountBalance(id);
-  const transactions = getTransactions({ accountId: id });
+  const balance = await getAccountBalance(id);
+  const transactions = await getTransactions({ accountId: id });
 
-  const history = getNetWorthHistory(12).map((p) => ({
+  const history = (await getNetWorthHistory(12)).map((p) => ({
     month: p.month,
     balance: p.netWorth,
   }));
